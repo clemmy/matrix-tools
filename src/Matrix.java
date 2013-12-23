@@ -141,6 +141,11 @@ public class Matrix {
 
         // returns the determinant of a matrix (fill this in)
         public double determinant() {
+        	
+        	if (this.rows != this.columns){
+        		System.out.println("MATRIX NOT SQUARE! YOU CAN'T CALCULATE DETERMINANT.");
+        		return (Double) null;
+        	}
         	double determinant = 0;
         	
         	for (int i = 1; i <= this.columns; i++) {
@@ -155,6 +160,11 @@ public class Matrix {
 
         // a subroutine used for finding a matrix with the first ith row and the jth column omitted
         public Matrix kill(int i, int j) {
+        	
+        	if (i < 1 || i > this.rows || j < 1 || j > this.columns){
+        		System.out.println("OUT OF BOUNDS! YOU CAN'T KILL THAT ROW/COLUMN BECAUSE IT DOES NOT EXIST");
+        		return null;
+        	}
         	
         	Matrix newMatrix = new Matrix(this.rows-1, this.columns-1);
         	int x = 0; int y = 0;
@@ -178,4 +188,48 @@ public class Matrix {
         	
         }
         
+        // a method to determine the cofactor matrix
+        public Matrix cofactor() {
+        	
+        	Matrix cof = new Matrix(this.rows, this.columns);
+        	
+        	for (int i = 0; i < cof.rows; i++)
+        		for (int j = 0; j < cof.columns; j++) {
+        			cof.matrix[i][j] = Math.pow((-1),(j+1)+(i+1)) * this.kill(i+1,j+1).determinant();
+        		}
+        	
+        	return cof;
+        	
+        }
+        
+        // transposes the matrix
+        public Matrix transpose(){
+        	
+        	Matrix transpose = new Matrix(this.rows,this.columns);
+        	
+        	for (int i = 0; i < transpose.rows; i++)
+        		for (int j = 0; j < transpose.rows; j++)
+        			transpose.matrix[i][j] = this.matrix[j][i]; 
+        	
+        	return transpose;
+        	
+        }
+        
+        // returns the inverse of the provided matrix
+        
+        public Matrix sInvert() {
+        	
+        	if (this.rows != this.columns){
+        		System.out.println("MATRIX NOT SQUARE! CALLING THE WRONG FUNCTION.");
+        		return null;
+        	}
+        	
+        	if (this.determinant() == 0){
+        		System.out.println("DETERMINANT IS ZERO SO NO INVERSE EXISTS!");
+        		return null;
+        	}
+        	
+        	return this.cofactor().transpose().divide(this.determinant());
+        	
+        }
 }
