@@ -215,8 +215,7 @@ public class Matrix {
         	
         }
         
-        // returns the inverse of the provided matrix
-        
+        // returns the inverse of the provided square matrix
         public Matrix sInvert() {
         	
         	if (this.rows != this.columns){
@@ -232,4 +231,35 @@ public class Matrix {
         	return this.cofactor().transpose().divide(this.determinant());
         	
         }
+
+        // returns the trace of the provided matrix
+        public double trace(){
+        	
+        	if (this.columns != this.rows){
+        		System.out.println("NOT A SQUARE MATRIX. TRACE CALCULATION FAILED!");
+        		return (Double)null;
+        	}
+        	
+        	double trace = 0;
+        	
+        	for (int i = 0; i < this.columns; i++)
+        		trace += this.matrix[i][i];
+        	
+        	return trace;
+        }
+        
+        // return the b power of a matrix
+        public Matrix power(int num) {
+        	
+        	Matrix powerM = new Matrix(this.rows,this.columns);
+        	
+        	for (int i = 0; i < this.rows; i++)
+        		powerM.matrix[i][i] = 1;
+        	
+        	for (int i = 0; i < num; i++)
+        		powerM = powerM.multiply(this);
+        	
+        	return powerM;
+        }
+
 }
