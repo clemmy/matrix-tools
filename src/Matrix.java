@@ -6,7 +6,6 @@ public class Matrix {
         double[][] matrix;
         int rows = 0;
         int columns = 0;
-        int nonZeroRows = this.rows; // Assumption that the last column is non-zero
         
         // creates an empty matrix of dimensions (row, cols)
         public Matrix(int rows, int cols) 
@@ -86,7 +85,7 @@ public class Matrix {
         }
         
         // edit a single element of a matrix
-        public void edit(int row, int col, double value) {
+        public void editElement(int row, int col, double value) {
         	
         	this.matrix[row-1][col-1] = value;
         	
@@ -164,7 +163,7 @@ public class Matrix {
         }
 
         // returns the (i, j)th entry in the matrix
-        public double get(int i, int j) {
+        public double getElement(int i, int j) {
         	return this.matrix[i-1][j-1];
         }
 
@@ -522,4 +521,61 @@ public class Matrix {
         	
         	return rref;
         }
+
+        // returns true if upper triangular, returns false, if not
+        public boolean isUpperTriangular() {
+        	if (this.rows != this.columns)
+        		return false;
+        	
+        	for (int j = 0; j < this.columns; j++) 
+        		for (int i = j + 1; i < this.rows; i++) 
+        			if (this.matrix[i][j] != 0)
+        				return false;
+        	
+        	return true;
+        }
+        
+        // returns true if lower triangular, returns false otherwise
+        public boolean isLowerTriangular() {
+        	if (this.rows != this.columns)
+        		return false;
+        	
+        	for (int j = 0; j < this.columns; j++) 
+        		for (int i = j - 1; i >= 0; i--) 
+        			if (this.matrix[i][j] != 0)
+        				return false;
+        	
+        	return true;
+        }
+        
+        // returns true if both upper Triangular and lower Triangular
+        public boolean isDiagonal() {
+        	if (this.isUpperTriangular() && this.isLowerTriangular())
+        		return true;
+        	else
+        		return false;
+        }
+        
+        // returns true if the matrix is orthogonal, false if it isn't
+        public boolean isOrthogonal(){
+        	
+        	if (this.rows != this.columns)
+        		return false;
+        	
+        	double[] sum = new double[this.columns];
+        	
+        	for (int i = 0; i < this.rows; i++) {
+        		for (int j = 0; j < this.columns; j++) 
+        			sum[i] += Math.pow(this.matrix[i][j],2);
+        		sum[i] = Math.sqrt(sum[i]);
+        	}
+        	
+        	for (int i = 0; i < this.rows; i++) {
+        		if (sum[i] != 1)
+        			return false;
+        	}
+        	
+        	return true;
+        }
+        
 }
