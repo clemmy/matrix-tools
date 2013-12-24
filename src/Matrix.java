@@ -6,6 +6,7 @@ public class Matrix {
         double[][] matrix;
         int rows = 0;
         int columns = 0;
+        int nonZeroRows = this.rows; // Assumption that the last column is non-zero
         
         // creates an empty matrix of dimensions (row, cols)
         public Matrix(int rows, int cols) 
@@ -54,7 +55,7 @@ public class Matrix {
         public void print(int precision) {
         	for (int i = 0; i < this.rows; i++) {
         		for (int j = 0; j < this.columns; j++) {
-        			System.out.print(round(this.matrix[i][j],precision) + " ");
+        			System.out.print(Double.toString(round(this.matrix[i][j],precision) + 0.0) + " ");
         		}
         		System.out.println("");
         	}
@@ -64,10 +65,24 @@ public class Matrix {
         public void print() {
         	for (int i = 0; i < this.rows; i++) {
         		for (int j = 0; j < this.columns; j++) {
-        			System.out.print(this.matrix[i][j] + " ");
+        			System.out.print(Double.toString(this.matrix[i][j] + 0.0) + " ");
         		}
         		System.out.println("");
         	}
+        }
+        
+        // checks to see if a matrix is Empty
+        public boolean isEmpty() {
+        	int counter = 0;
+        	
+        	for (int i = 1; i <= this.columns; i++)
+        		if (this.isColumnEmpty(i)){
+        			counter++;
+        		}
+        	if (counter == this.columns)
+        		return true;
+        	else
+        		return false;
         }
         
         // edit a single element of a matrix
@@ -77,6 +92,20 @@ public class Matrix {
         	
         }
 
+        // copies the elements of matrix b into the current matrix
+        public void copy(Matrix b){
+        	
+        	if (b.rows != this.rows || b.columns != this.columns){
+        		System.out.println("THE MATRIX YOU'RE TRYING TO COPY IS NOT THE SAME SIZE AS THE CURRENT MATRIX");
+        		return;
+        	}	
+        	
+        	for (int i = 0; i < this.rows; i++)
+        		for (int j = 0; j < this.columns; j++)
+        			this.matrix[i][j] = b.matrix[i][j];
+
+        }
+        
         // add two matrices
         public Matrix add(Matrix b) {
         	
@@ -261,5 +290,236 @@ public class Matrix {
         	
         	return powerM;
         }
+        
+        // swapping two rows
+        public Matrix rowSwap(int row1, int row2) {
+        	
+        	Matrix swapMatrix = new Matrix(this.rows,this.columns);
+        	swapMatrix.copy(this);
+        	
+        	double temp = 0; // temporary variable to ease swapping of values 
+        	
+        	for (int j = 0; j < swapMatrix.columns; j++) {
+        		temp = swapMatrix.matrix[row1 - 1][j];
+        		swapMatrix.matrix[row1 - 1][j] = swapMatrix.matrix[row2 - 1][j];
+        		swapMatrix.matrix[row2 - 1][j] = temp;
+        	}
+        		
+        	return swapMatrix;
+        	
+        }
+        
+        // swapping two columns
+        public Matrix columnSwap(int col1, int col2) {
+        	
+        	Matrix swapMatrix = new Matrix(this.rows,this.columns);
+        	swapMatrix.copy(this);
+        	
+        	double temp = 0; // temporary variable to ease swapping of values 
+        	
+        	for (int i = 0; i < swapMatrix.rows; i++) {
+        		temp = swapMatrix.matrix[i][col1 - 1];
+        		swapMatrix.matrix[i][col1 - 1] = swapMatrix.matrix[i][col2 - 1];
+        		swapMatrix.matrix[i][col2 - 1] = temp;
+        	}
+        		
+        	return swapMatrix;
+        	
+        }
 
+        // adds a multiple of one row to another; called like this addRow(row you want to add to, row that's being added, scaling factor of second row)
+        public Matrix rowAdd(int row1, int row2, double scalingFactor) {
+        	Matrix addMatrix = new Matrix(this.rows,this.columns);
+        	addMatrix.copy(this);
+        	
+        	for (int j = 0; j < addMatrix.columns; j++)
+        		addMatrix.matrix[row1-1][j] += scalingFactor*addMatrix.matrix[row2-1][j];
+        	
+        	return addMatrix;
+        }
+ 
+        // adds a multiple of one column to another; called like this columnAdd(column you want to add to, column that's being added, scaling factor of second column)
+        public Matrix columnAdd(int col1, int col2, double scalingFactor) {
+        	Matrix addMatrix = new Matrix(this.rows,this.columns);
+        	addMatrix.copy(this);
+        	
+        	for (int i = 0; i < addMatrix.rows; i++)
+        		addMatrix.matrix[i][col1-1] += scalingFactor*addMatrix.matrix[i][col2-1];
+        	
+        	return addMatrix;
+        }
+
+        // scales row1 by factor scalingFactor
+        public Matrix rowScale(int row1, double scalingFactor) {
+        	Matrix scaleMatrix = new Matrix(this.rows,this.columns);
+        	scaleMatrix.copy(this);
+        	
+        	for (int j = 0; j < scaleMatrix.columns; j++)
+        		scaleMatrix.matrix[row1-1][j] *= scalingFactor;
+        	
+        	return scaleMatrix;
+        }
+
+        // scales col1 by factor scalingFactor
+        public Matrix columnScale(int col1, double scalingFactor) {
+        	Matrix addMatrix = new Matrix(this.rows,this.columns);
+        	addMatrix.copy(this);
+        	
+        	for (int i = 0; i < addMatrix.rows; i++)
+        		addMatrix.matrix[i][col1-1] *= scalingFactor;
+        	
+        	return addMatrix;
+        }
+
+        // checks if row1 is zero (recursive function); not sure if good idea or not to use recursion
+        public boolean isRowEmpty(int row1) {
+        	return this.isRowEmpty(row1-1, 0);
+        }
+        
+        public boolean isRowEmpty(int row1, int index) {
+        	if (index == this.columns - 1 && this.matrix[row1][index] == 0)
+        		return true;
+        	else if (index == this.columns - 1 && this.matrix[row1][index] != 0)
+        		return false;
+        	else if (this.matrix[row1][index] == 0)
+        		return isRowEmpty(row1, index + 1);
+        	else 
+        		return false;
+        	
+        }
+        
+        // check if col1 is zero (recursive function); not sure if good idea or not to use recursion
+        public boolean isColumnEmpty(int col1) {
+        	return this.isColumnEmpty(col1-1, 0);
+        }
+        
+        public boolean isColumnEmpty(int col1, int index) {
+        	if (index == this.rows - 1 && this.matrix[index][col1] == 0)
+        		return true;
+        	else if (index == this.rows - 1 && this.matrix[index][col1] != 0)
+        		return false;
+        	else if (this.matrix[index][col1] == 0)
+        		return isColumnEmpty(col1, index + 1);
+        	else 
+        		return false;
+        	
+        }
+
+        // organizes the matrix in descending order in terms of the number of entries in each row
+        public Matrix reOrganize(){
+        	Matrix organizedMatrix = new Matrix(this.rows, this.columns);
+        	organizedMatrix.copy(this);
+        	
+        	// Gets the location of each element in each row
+        	int[] index = new int[organizedMatrix.rows];
+        	
+        	for (int i = 0; i < organizedMatrix.rows; i++)
+        		for (int j = 0; j < organizedMatrix.columns; j++)
+        			if (this.matrix[i][j] == 0)
+        				index[i]++;
+        			else
+        				break;
+
+        	int temp = 0;
+        	
+        	for (int i = 0; i < organizedMatrix.rows; i++) {
+        		for (int j = i + 1; j < organizedMatrix.rows; j++) {
+        			if (index[i] > index[j]) // row i+1 has less elements than row j+1
+        			{
+        				organizedMatrix = organizedMatrix.rowSwap(i+1,j+1);
+        				temp = index[i];
+        				index[i] = index[j];
+        				index[j] = temp;
+        				
+        			}
+        
+        		}
+        	}
+        	
+        	return organizedMatrix;
+        	
+        }
+        
+        // returns an integer containing the location data of the first element in row1
+        public int rowStartingPosition(int row1){
+        	
+        	int index = 0;
+        	
+        	for (int i = 0; i < this.columns; i++)
+        		if (this.matrix[row1 - 1][i] == 0)
+        			index++;
+        		else 
+        			break;
+        	
+        	return index + 1;
+        	
+        }
+        
+        // returns the first column in the matrix that contains data
+        public int firstNonEmptyColumn(){
+        	Matrix newMatrix = new Matrix(this.rows, this.columns);
+        	newMatrix.copy(this.reOrganize());
+        	
+        	for (int i = 1; i <= newMatrix.columns; i++) {
+        		if (!(newMatrix.isColumnEmpty(i) == true))
+        			return i;
+        	}
+        	
+        	System.out.println("YOUR MATRIX IS EMPTY! RETURNING 0");
+        	return 0;
+        }
+        
+        // returns the ref of the matrix object
+        public Matrix ref() {
+        	Matrix ref = new Matrix(this.rows, this.columns);
+        	ref.copy(this.reOrganize());
+        	
+        	if (ref.isEmpty())
+        		return ref;
+        	
+//        	System.out.println(this.firstNonEmptyColumn());
+        	
+        	// BULK CODE:
+        	for (int j = this.firstNonEmptyColumn(), i = 1;j <= this.columns; j++, i++) {
+        		for (int l = i + 1; l <= this.rows; l++) {
+//        			ref.print(1);
+        			
+        			if (ref.matrix[i-1][j-1] != 0)
+        				ref = ref.rowAdd(l,i,-(ref.matrix[l-1][j-1]/ref.matrix[i-1][j-1]));
+//        			System.out.println();
+
+        		}
+        		ref = ref.reOrganize();
+        	}
+//        	System.out.println();
+        	return ref;
+        }
+
+        // returns the rref of the matrix object
+        public Matrix rref() {
+        	
+        	Matrix rref = new Matrix(this.rows, this.columns);
+        	rref.copy(this.ref());
+        	
+        	if (rref.isEmpty())
+        		return rref;
+        	
+        	// BULK CODE:
+        	for (int j = rref.firstNonEmptyColumn(), i = 1;j <= this.columns; j++, i++) {
+        		for (int l = i - 1; l >= 1; l--) {
+//        			rref.print(1);
+        			
+        			if (rref.matrix[i-1][j-1] != 0)
+        				rref = rref.rowAdd(l,i,-(rref.matrix[l-1][j-1]/rref.matrix[i-1][j-1]));
+//        			System.out.println();
+
+        		}
+        	}
+        	
+        	for (int i = 1, j = rref.firstNonEmptyColumn(); i <= rref.rows; i++, j++)
+        		if (rref.matrix[i-1][j-1] != 0)
+        			rref = rref.rowScale(i,1/(rref.matrix[i-1][j-1]));
+        	
+        	return rref;
+        }
 }
