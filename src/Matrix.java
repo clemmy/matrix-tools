@@ -56,8 +56,9 @@ public class Matrix {
         		for (int j = 0; j < this.columns; j++) {
         			System.out.print(round(this.matrix[i][j],precision) + " ");
         		}
-        		System.out.println("");
+        		System.out.println();
         	}
+        	System.out.println();
         }
         
         // print the matrix normally
@@ -233,10 +234,10 @@ public class Matrix {
         // transposes the matrix
         public Matrix transpose(){
         	
-        	Matrix transpose = new Matrix(this.rows,this.columns);
+        	Matrix transpose = new Matrix(this.columns,this.rows);
         	
         	for (int i = 0; i < transpose.rows; i++)
-        		for (int j = 0; j < transpose.rows; j++)
+        		for (int j = 0; j < transpose.columns; j++)
         			transpose.matrix[i][j] = this.matrix[j][i]; 
         	
         	return transpose;
@@ -507,20 +508,37 @@ public class Matrix {
         	
         	// BULK CODE:
         	for (int j = rref.firstNonEmptyColumn(), i = 1;j <= this.columns; j++, i++) {
+        		
+        		if (i == this.rows + 1)
+        			break;
+        		
         		for (int l = i - 1; l >= 1; l--) {
 //        			rref.print(1);
-        			
+//        			System.out.println(i + " " + j);
         			if (rref.matrix[i-1][j-1] != 0)
         				rref = rref.rowAdd(l,i,-(rref.matrix[l-1][j-1]/rref.matrix[i-1][j-1]));
 //        			System.out.println();
 
         		}
+        		
+        		// if you're at the last diagonal but the matrix has more columns than it 
+        		// does rows, you keep the row constant while incrementing the columns
+        		if (i == this.rows && j < this.columns && rref.matrix[i-1][j-1] == 0)
+        			i--;
         	}
         	
-        	for (int i = 1, j = rref.firstNonEmptyColumn(); i <= rref.rows; i++, j++)
+        	for (int i = 1, j = rref.firstNonEmptyColumn(); i <= rref.rows; i++, j++) {
         		if (rref.matrix[i-1][j-1] != 0)
         			rref = rref.rowScale(i,1/(rref.matrix[i-1][j-1]));
-        	
+        		
+        		// if you're at the last diagonal but the matrix has more columns than it 
+        		// does rows, you keep the row# constant while incrementing the columns
+        		if (i == this.rows && j < this.columns && rref.matrix[i-1][j-1] == 0)
+        			i--;
+        		// same shizz as above but keeing the columns constant instead of the rows
+        		if (j == this.columns && i < this.rows )
+        			j--;
+        	}
         	return rref;
         }
 
