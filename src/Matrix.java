@@ -54,7 +54,7 @@ public class Matrix {
         public void print(int precision) {
         	for (int i = 0; i < this.rows; i++) {
         		for (int j = 0; j < this.columns; j++) {
-        			System.out.print(Double.toString(round(this.matrix[i][j],precision) + 0.0) + " ");
+        			System.out.print(round(this.matrix[i][j],precision) + " ");
         		}
         		System.out.println("");
         	}
@@ -64,7 +64,7 @@ public class Matrix {
         public void print() {
         	for (int i = 0; i < this.rows; i++) {
         		for (int j = 0; j < this.columns; j++) {
-        			System.out.print(Double.toString(this.matrix[i][j] + 0.0) + " ");
+        			System.out.print(this.matrix[i][j] + " ");
         		}
         		System.out.println("");
         	}
@@ -334,6 +334,7 @@ public class Matrix {
         	for (int j = 0; j < addMatrix.columns; j++)
         		addMatrix.matrix[row1-1][j] += scalingFactor*addMatrix.matrix[row2-1][j];
         	
+        	addMatrix.killWeirdness();
         	return addMatrix;
         }
  
@@ -345,6 +346,7 @@ public class Matrix {
         	for (int i = 0; i < addMatrix.rows; i++)
         		addMatrix.matrix[i][col1-1] += scalingFactor*addMatrix.matrix[i][col2-1];
         	
+        	addMatrix.killWeirdness();
         	return addMatrix;
         }
 
@@ -356,18 +358,20 @@ public class Matrix {
         	for (int j = 0; j < scaleMatrix.columns; j++)
         		scaleMatrix.matrix[row1-1][j] *= scalingFactor;
         	
+        	scaleMatrix.killWeirdness();
         	return scaleMatrix;
         }
 
         // scales col1 by factor scalingFactor
         public Matrix columnScale(int col1, double scalingFactor) {
-        	Matrix addMatrix = new Matrix(this.rows,this.columns);
-        	addMatrix.copy(this);
+        	Matrix scaleMatrix = new Matrix(this.rows,this.columns);
+        	scaleMatrix.copy(this);
         	
-        	for (int i = 0; i < addMatrix.rows; i++)
-        		addMatrix.matrix[i][col1-1] *= scalingFactor;
+        	for (int i = 0; i < scaleMatrix.rows; i++)
+        		scaleMatrix.matrix[i][col1-1] *= scalingFactor;
         	
-        	return addMatrix;
+        	scaleMatrix.killWeirdness();
+        	return scaleMatrix;
         }
 
         // checks if row1 is zero (recursive function); not sure if good idea or not to use recursion
@@ -429,9 +433,7 @@ public class Matrix {
         				temp = index[i];
         				index[i] = index[j];
         				index[j] = temp;
-        				
         			}
-        
         		}
         	}
         	
@@ -557,6 +559,7 @@ public class Matrix {
         }
         
         // returns true if the matrix is orthogonal, false if it isn't
+        // TODO: test this shit.
         public boolean isOrthogonal(){
         	
         	if (this.rows != this.columns)
@@ -577,5 +580,15 @@ public class Matrix {
         	
         	return true;
         }
+        
+        // eliminate negative zero that the scaleRow and scaleColumn functions sometimes cause
+        public void killWeirdness() {
+        	
+        	for (int i = 0; i < this.rows; i++)
+        		for (int j = 0; j < this.columns; j++)
+        			this.matrix[i][j] += 0.0;
+        	
+        }
+        
         
 }
