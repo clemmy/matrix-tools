@@ -3,9 +3,10 @@ import java.math.BigDecimal;
 
 public class Matrix {
 
-        double[][] matrix;
-        int rows = 0;
-        int columns = 0;
+        private double[][] matrix;
+        private int rows = 0;		// These variables can be replaced with the use of subroutines but it makes the code less readable so screw that
+        private int columns = 0;    // These variables can be replaced with the use of subroutines but it makes the code less readable so screw that
+        private double epsilon = 0.000000000001;
         
         // creates an empty matrix of dimensions (row, cols)
         public Matrix(int rows, int cols) 
@@ -22,8 +23,21 @@ public class Matrix {
         {
                 //TODO: check if columns are equal in every row before creating?
                 this.matrix=matrix;
-                this.rows = this.matrix.length;
-                this.columns = this.matrix[0].length;
+        }
+        
+        // returns the multidimensional array associated with the matrix
+        public double[][] get2DArray(){
+        	return this.matrix;
+        }
+        
+        // returns the number of rows in the matrix
+        public int getRowCount(){
+        	return this.matrix.length;
+        }
+        
+        // returns the number of columns in the matrix
+        public int getColumnCount(){
+        	return this.matrix[0].length;
         }
         
         // multiplies two matrices and returns their product
@@ -86,7 +100,7 @@ public class Matrix {
         }
         
         // edit a single element of a matrix
-        public void editElement(int row, int col, double value) {
+        public void setElement(int row, int col, double value) {
         	
         	this.matrix[row-1][col-1] = value;
         	
@@ -169,7 +183,7 @@ public class Matrix {
         }
 
         // returns the determinant of a matrix (fill this in)
-        public double determinant() {
+        public double getDeterminant() {
         	
         	if (this.rows != this.columns){
         		System.out.println("MATRIX NOT SQUARE! YOU CAN'T CALCULATE DETERMINANT.");
@@ -179,7 +193,7 @@ public class Matrix {
         	
         	for (int i = 1; i <= this.columns; i++) {
         		if (this.columns != 2)
-        			determinant += this.matrix[1-1][i-1] * Math.pow((-1),1+i)* this.kill(1, i).determinant(); 
+        			determinant += this.matrix[1-1][i-1] * Math.pow((-1),1+i)* this.kill(1, i).getDeterminant(); 
         		else
         			return this.matrix[0][0]*this.matrix[1][1] - this.matrix[0][1]*this.matrix[1][0];
         	}
@@ -218,13 +232,13 @@ public class Matrix {
         }
         
         // a method to determine the cofactor matrix
-        public Matrix cofactor() {
+        public Matrix getCofactorMatrix() {
         	
         	Matrix cof = new Matrix(this.rows, this.columns);
         	
         	for (int i = 0; i < cof.rows; i++)
         		for (int j = 0; j < cof.columns; j++) {
-        			cof.matrix[i][j] = Math.pow((-1),(j+1)+(i+1)) * this.kill(i+1,j+1).determinant();
+        			cof.matrix[i][j] = Math.pow((-1),(j+1)+(i+1)) * this.kill(i+1,j+1).getDeterminant();
         		}
         	
         	return cof;
@@ -232,7 +246,7 @@ public class Matrix {
         }
         
         // transposes the matrix
-        public Matrix transpose(){
+        public Matrix getTranspose(){
         	
         	Matrix transpose = new Matrix(this.columns,this.rows);
         	
@@ -245,24 +259,24 @@ public class Matrix {
         }
         
         // returns the inverse of the provided square matrix
-        public Matrix sInvert() {
+        public Matrix getInverse() {
         	
         	if (this.rows != this.columns){
         		System.out.println("MATRIX NOT SQUARE! CALLING THE WRONG FUNCTION.");
         		return null;
         	}
         	
-        	if (this.determinant() == 0){
+        	if (this.getDeterminant() == 0){
         		System.out.println("DETERMINANT IS ZERO SO NO INVERSE EXISTS!");
         		return null;
         	}
         	
-        	return this.cofactor().transpose().divide(this.determinant());
+        	return this.getCofactorMatrix().getTranspose().divide(this.getDeterminant());
         	
         }
 
         // returns the trace of the provided matrix
-        public double trace(){
+        public double getTrace(){
         	
         	if (this.columns != this.rows){
         		System.out.println("NOT A SQUARE MATRIX. TRACE CALCULATION FAILED!");
@@ -410,7 +424,7 @@ public class Matrix {
         }
 
         // organizes the matrix in descending order in terms of the number of entries in each row
-        public Matrix reOrganize(){
+        public Matrix reorganize(){
         	Matrix organizedMatrix = new Matrix(this.rows, this.columns);
         	organizedMatrix.copy(this);
         	
@@ -443,7 +457,7 @@ public class Matrix {
         }
         
         // returns an integer containing the location data of the first element in row1
-        public int rowStartingPosition(int row1){
+        public int getRowStartingPosition(int row1){
         	
         	int index = 0;
         	
@@ -458,9 +472,9 @@ public class Matrix {
         }
         
         // returns the first column in the matrix that contains data
-        public int firstNonEmptyColumn(){
+        public int getFirstNonEmptyColumn(){
         	Matrix newMatrix = new Matrix(this.rows, this.columns);
-        	newMatrix.copy(this.reOrganize());
+        	newMatrix.copy(this.reorganize());
         	
         	for (int i = 1; i <= newMatrix.columns; i++) {
         		if (!(newMatrix.isColumnEmpty(i) == true))
@@ -472,9 +486,9 @@ public class Matrix {
         }
         
         // returns the ref of the matrix object
-        public Matrix ref() {
+        public Matrix getREF() {
         	Matrix ref = new Matrix(this.rows, this.columns);
-        	ref.copy(this.reOrganize());
+        	ref.copy(this.reorganize());
         	
         	if (ref.isEmpty())
         		return ref;
@@ -482,7 +496,7 @@ public class Matrix {
 //        	System.out.println(this.firstNonEmptyColumn());
         	
         	// BULK CODE:
-        	for (int j = this.firstNonEmptyColumn(), i = 1;j <= this.columns; j++, i++) {
+        	for (int j = this.getFirstNonEmptyColumn(), i = 1;j <= this.columns; j++, i++) {
         		for (int l = i + 1; l <= this.rows; l++) {
 //        			ref.print(1);
         			
@@ -491,49 +505,50 @@ public class Matrix {
 //        			System.out.println();
 
         		}
-        		ref = ref.reOrganize();
+        		ref = ref.reorganize();
         	}
 //        	System.out.println();
         	return ref;
         }
 
         // returns the rref of the matrix object
-        public Matrix rref() {
+        public Matrix getRREF() {
         	
         	Matrix rref = new Matrix(this.rows, this.columns);
-        	rref.copy(this.ref());
+        	rref.copy(this.getREF());
         	
         	if (rref.isEmpty())
         		return rref;
         	
         	// BULK CODE:
-        	for (int j = rref.firstNonEmptyColumn(), i = 1;j <= this.columns; j++, i++) {
+        	for (int j = rref.getFirstNonEmptyColumn(), i = 1;j <= this.columns; j++, i++) {
         		
         		if (i == this.rows + 1)
         			break;
         		
         		for (int l = i - 1; l >= 1; l--) {
-//        			rref.print(1);
-//        			System.out.println(i + " " + j);
-        			if (rref.matrix[i-1][j-1] != 0)
+        			rref.print(1);
+        			System.out.println(i + " " + j);
+        			if (Math.abs(rref.matrix[i-1][j-1]) > epsilon) {
         				rref = rref.rowAdd(l,i,-(rref.matrix[l-1][j-1]/rref.matrix[i-1][j-1]));
-//        			System.out.println();
-
+        				System.out.println("rowAddition done rref.matrix[i-1][j-1] is " + rref.matrix[i-1][j-1]);
+        			}
+        			rref.print(1);
         		}
         		
         		// if you're at the last diagonal but the matrix has more columns than it 
         		// does rows, you keep the row constant while incrementing the columns
-        		if (i == this.rows && j < this.columns && rref.matrix[i-1][j-1] == 0)
+        		if (i == this.rows && j < this.columns && Math.abs(rref.matrix[i-1][j-1]) < epsilon)
         			i--;
         	}
         	
-        	for (int i = 1, j = rref.firstNonEmptyColumn(); i <= rref.rows; i++, j++) {
-        		if (rref.matrix[i-1][j-1] != 0)
+        	for (int i = 1, j = rref.getFirstNonEmptyColumn(); i <= rref.rows; i++, j++) {
+        		if (Math.abs(rref.matrix[i-1][j-1]) > epsilon)
         			rref = rref.rowScale(i,1/(rref.matrix[i-1][j-1]));
         		
         		// if you're at the last diagonal but the matrix has more columns than it 
         		// does rows, you keep the row# constant while incrementing the columns
-        		if (i == this.rows && j < this.columns && rref.matrix[i-1][j-1] == 0)
+        		if (i == this.rows && j < this.columns && Math.abs(rref.matrix[i-1][j-1]) < epsilon)
         			i--;
         		// same shizz as above but keeing the columns constant instead of the rows
         		if (j == this.columns && i < this.rows )
@@ -604,7 +619,8 @@ public class Matrix {
         	
         	for (int i = 0; i < this.rows; i++)
         		for (int j = 0; j < this.columns; j++)
-        			this.matrix[i][j] += 0.0;
+        			if (Math.abs(this.matrix[i][j]) < epsilon)
+        				this.matrix[i][j] = 0;
         	
         }
         
