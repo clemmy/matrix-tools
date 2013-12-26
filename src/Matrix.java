@@ -23,11 +23,19 @@ public class Matrix {
         {
                 //TODO: check if columns are equal in every row before creating?
                 this.matrix=matrix;
+                this.rows = this.matrix.length;
+                this.columns = this.matrix[0].length;
         }
         
         // returns the multidimensional array associated with the matrix
         public double[][] get2DArray(){
-        	return this.matrix;
+        	double[][] newArray = new double[this.rows][this.columns];
+        	
+        	for (int i = 0; i < this.rows; i++)
+        		for (int j = 0; j < this.columns; j++)
+        			newArray[i][j] = this.matrix[i][j];
+        	
+        	return newArray;
         }
         
         // returns the number of rows in the matrix
@@ -493,21 +501,17 @@ public class Matrix {
         	if (ref.isEmpty())
         		return ref;
         	
-//        	System.out.println(this.firstNonEmptyColumn());
-        	
         	// BULK CODE:
         	for (int j = this.getFirstNonEmptyColumn(), i = 1;j <= this.columns; j++, i++) {
         		for (int l = i + 1; l <= this.rows; l++) {
-//        			ref.print(1);
         			
         			if (ref.matrix[i-1][j-1] != 0)
         				ref = ref.rowAdd(l,i,-(ref.matrix[l-1][j-1]/ref.matrix[i-1][j-1]));
-//        			System.out.println();
+
 
         		}
         		ref = ref.reorganize();
         	}
-//        	System.out.println();
         	return ref;
         }
 
@@ -527,13 +531,9 @@ public class Matrix {
         			break;
         		
         		for (int l = i - 1; l >= 1; l--) {
-        			rref.print(1);
-        			System.out.println(i + " " + j);
         			if (Math.abs(rref.matrix[i-1][j-1]) > epsilon) {
         				rref = rref.rowAdd(l,i,-(rref.matrix[l-1][j-1]/rref.matrix[i-1][j-1]));
-        				System.out.println("rowAddition done rref.matrix[i-1][j-1] is " + rref.matrix[i-1][j-1]);
         			}
-        			rref.print(1);
         		}
         		
         		// if you're at the last diagonal but the matrix has more columns than it 
