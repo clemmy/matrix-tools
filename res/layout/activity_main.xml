@@ -4,21 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
  
-    <!-- The main content view -->
+    <!-- Framelayout to display content Fragments -->
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
  
-    <!-- The navigation drawer -->
-    <ListView android:id="@+id/left_drawer"
+    <!-- Listview to display slider menu -->
+    <ListView android:id="@+id/ops_drawer"
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:choiceMode="singleChoice"
         android:divider="#666"
         android:dividerHeight="1dp"
-        android:background="#333"
+        android:background="@color/background_holo_light"
         android:paddingLeft="15sp"
         android:paddingRight="15sp"
         />
