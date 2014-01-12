@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <EditText
+    <!--EditText
         android:scrollbars="horizontal|vertical"
         android:id="@+id/matrixEditText"
         android:layout_width="wrap_content"
@@ -16,6 +16,83 @@
         android:scrollbarAlwaysDrawHorizontalTrack="true"
         android:scrollbarAlwaysDrawVerticalTrack="true"
         >
-    </EditText>
+    </EditText-->
+    <!-->EditText
+	    android:id="@+id/editTextFull"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:ems="10"
+	    android:lines="10"
+	    android:scrollbars="vertical|horizontal"
+	    android:gravity="top"
+	    android:inputType="number"
+     >
 
+    <requestFocus />
+	</EditText-->
+	
+	<!--ScrollView 
+        android:scrollbars="horizontal" 
+        android:layout_height="fill_parent" 
+        android:layout_width="fill_parent">
+        <HorizontalScrollView 
+            android:id="@+id/horizontalView" 
+            android:layout_height="wrap_content"
+            android:scrollbars="horizontal|vertical" 
+            android:layout_width="wrap_content">
+            
+            <EditText android:id="@+id/editTextFull"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:ems="10"
+			    android:lines="10"
+			    android:gravity="top"
+			    android:inputType="textMultiLine">
+            </EditText>
+       </HorizontalScrollView>
+    </ScrollView-->
+    <!--EditText
+        android:id="@+id/editText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:gravity="top"
+        android:lines="10"
+        android:width="3000dp"
+        android:inputType="textNoSuggestions|textMultiLine"
+        android:scrollbars="vertical|horizontal" /-->
+        
+      <!--  TextView
+          android:editable="true"
+			android:id="@+id/MarqueeText" 
+			android:lines="10"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content" 
+			android:singleLine="false"
+			android:width="3000dp"
+			android:scrollHorizontally="true" 
+			android:paddingLeft="15dip" 
+			android:paddingRight="15dip" 
+			android:focusable="true" 
+			android:focusableInTouchMode="true"
+			android:imeOptions="actionDone"
+			/-->
+			
+	<HorizontalScrollView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content" >
+	    <EditText
+	        android:id="@+id/matrix_text_view"
+	        android:layout_width="fill_parent"
+	        android:width="3000dp"
+	        android:layout_height="wrap_content"
+	        android:singleLine="false"
+	        android:lines="10"
+	        android:scrollbars="vertical"
+	        android:textColor="@color/black"
+	        android:gravity="top"
+	        android:inputType="textMultiLine"
+      		android:hint="@string/example_A">
+	    </EditText>
+	</HorizontalScrollView>
 </LinearLayout>
