@@ -3,24 +3,19 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
- 
-    <!-- Framelayout to display content Fragments -->
+
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
- 
-    <!-- Listview to display slider menu -->
-    <ListView android:id="@+id/ops_drawer"
+
+    <ListView
+        android:id="@+id/ops_drawer"
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:choiceMode="singleChoice"
-        android:divider="#666"
-        android:dividerHeight="1dp"
-        android:background="@color/background_holo_light"
-        android:paddingLeft="15sp"
-        android:paddingRight="15sp"
-        />
- 
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        android:background="#111"/>
 </android.support.v4.widget.DrawerLayout>
