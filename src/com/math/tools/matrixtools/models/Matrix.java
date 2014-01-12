@@ -1,5 +1,3 @@
-package com.math.tools.matrixtools.models;
-
 import java.math.BigDecimal;
 
 
@@ -9,6 +7,7 @@ public class Matrix {
         private int rows = 0;		// These variables can be replaced with the use of subroutines but it makes the code less readable so screw that
         private int columns = 0;    // These variables can be replaced with the use of subroutines but it makes the code less readable so screw that
         private double epsilon = 0.000000000001;
+        private double detSign = 1;
         
         // creates an empty matrix of dimensions (row, cols)
         public Matrix(int rows, int cols) 
@@ -89,10 +88,37 @@ public class Matrix {
         public void print() {
         	for (int i = 0; i < this.rows; i++) {
         		for (int j = 0; j < this.columns; j++) {
-        			System.out.print(this.matrix[i][j] + " ");
+        			System.out.print(BigDecimal.valueOf(this.matrix[i][j]).toPlainString() + " ");
         		}
         		System.out.println("");
         	}
+        	System.out.println("");
+        	
+        }
+        
+        // prints a wolfram alpha readable matrix
+        public void printWolfram() {
+        	
+        	System.out.print("{{");
+        	for (int i = 0; i < this.rows; i++) {
+        		for (int j = 0; j < this.columns; j++) {
+        			System.out.print( this.matrix[i][j]);
+        			
+        			if (j == this.columns - 1);
+        			else
+        				System.out.print(", ");
+        				
+        				
+        		}
+        		if (i == this.rows - 1)
+        			System.out.print("}");
+        		else {
+        			System.out.println("}, ");
+        			System.out.print("{");
+        		}
+        	}
+        	System.out.println("}");
+        	
         }
         
         // checks to see if a matrix is Empty
@@ -192,25 +218,48 @@ public class Matrix {
         	return this.matrix[i-1][j-1];
         }
 
-        // returns the determinant of a matrix (fill this in)
+        
         public double getDeterminant() {
         	
         	if (this.rows != this.columns){
         		System.out.println("MATRIX NOT SQUARE! YOU CAN'T CALCULATE DETERMINANT.");
-        		return (Double) null;
-        	}
-        	double determinant = 0;
-        	
-        	for (int i = 1; i <= this.columns; i++) {
-        		if (this.columns != 2)
-        			determinant += this.matrix[1-1][i-1] * Math.pow((-1),1+i)* this.kill(1, i).getDeterminant(); 
-        		else
-        			return this.matrix[0][0]*this.matrix[1][1] - this.matrix[0][1]*this.matrix[1][0];
+        		return (Double)null;
+        		//TODO: throw new SomeNameOfException
         	}
         	
-        	return determinant;
+        	Matrix newMatrix = new Matrix(this.rows, this.columns);
+        	newMatrix.copy(this);
+        	
+        	newMatrix = newMatrix.getREF();
+        	double determinant = 1;
+        	
+        	for (int i = 0; i < newMatrix.rows; i++)
+        		determinant *= newMatrix.matrix[i][i];
+        	
+        	
+        	return determinant * detSign;
         }
+        
+//  	  KILLED BECAUSE INEFFICIENT
+//        public double getDeterminant() {
+//
+//        	if (this.rows != this.columns){
+//        		System.out.println("MATRIX NOT SQUARE! YOU CAN'T CALCULATE DETERMINANT.");
+//        		return (Double) null;
+//        	}
+//        	double determinant = 0;
+//        	
+//        	for (int i = 1; i <= this.columns; i++) {
+//        		if (this.columns != 2)
+//        			determinant += this.matrix[1-1][i-1] * Math.pow((-1),1+i)* this.kill(1, i).getDeterminant(); 
+//        		else
+//        			return this.matrix[0][0]*this.matrix[1][1] - this.matrix[0][1]*this.matrix[1][0];
+//        	}
+//        	
+//        	return determinant;
+//        }
 
+        
         // a subroutine used for finding a matrix with the first ith row and the jth column omitted
         public Matrix kill(int i, int j) {
         	
@@ -280,6 +329,14 @@ public class Matrix {
         		System.out.println("DETERMINANT IS ZERO SO NO INVERSE EXISTS!");
         		return null;
         	}
+        	
+        	
+        	/*System.out.println("this.getCofactorMatrix().print()");
+        	this.getCofactorMatrix().print();
+        	System.out.println("this.getCofactorMatrix().getTranspose().print()");
+        	this.getCofactorMatrix().getTranspose().print();
+        	System.out.println("this.getCofactorMatrix().getTranspose().divide(this.getDeterminant()).print();");
+        	this.getCofactorMatrix().getTranspose().divide(this.getDeterminant()).print();*/
         	
         	return this.getCofactorMatrix().getTranspose().divide(this.getDeterminant());
         	
@@ -458,6 +515,7 @@ public class Matrix {
         				temp = index[i];
         				index[i] = index[j];
         				index[j] = temp;
+        				detSign = -detSign;
         			}
         		}
         	}
@@ -496,6 +554,7 @@ public class Matrix {
         }
         
         // returns the ref of the matrix object
+        // DO NOT CHANGE THIS. ANY MODIFICATION COULD BREAK THE DETERMINANT SUBROUTINE 
         public Matrix getREF() {
         	Matrix ref = new Matrix(this.rows, this.columns);
         	ref.copy(this.reorganize());
@@ -509,11 +568,10 @@ public class Matrix {
         			
         			if (ref.matrix[i-1][j-1] != 0)
         				ref = ref.rowAdd(l,i,-(ref.matrix[l-1][j-1]/ref.matrix[i-1][j-1]));
-
-
         		}
         		ref = ref.reorganize();
         	}
+        	
         	return ref;
         }
 
@@ -625,6 +683,43 @@ public class Matrix {
         				this.matrix[i][j] = 0;
         	
         }
+           
+        // creates a new matrix with random elements of size "row" by "column", with elements ranging from +range to -range with 10^percision decimal places
+        public static Matrix genRandom(int row, int column, int range, int precision) {
+        	
+        	//TODO: figure out the test cases/checks that need to be made here
+        	
+        	Matrix random = new Matrix(row,column);
+        	
+        	for (int i = 0; i < row; i++) {
+        		for (int j = 0; j < column; j++) {
+        			random.matrix[i][j] = ((double) ( (long) ((Math.random() - Math.random())*range*Math.pow(10,precision)) ) )/Math.pow(10,precision);
+        		}
+        	}
+        	
+        	return random;
+        	
+        }
         
+        // creates a new random matrix of max size of 10 by 10, with default 2 decimal place precision, and max range +/-100 
+        
+        public static Matrix genRandom() {
+        	
+        	int row = (int)(Math.random()*10) + 1;
+        	int column = (int)(Math.random()*10) + 1;
+        	
+        	return Matrix.genRandom(row,column,10000,2);
+        	
+        }
+        
+        // creates a new random square matrix of max size of 10 by 10, with default 2 decimal place precision, and max range +/-100 
+
+        public static Matrix genRandomSquare() {
+        	
+        	int rowOrColumn = (int)(Math.random()*10) + 1;
+        	
+        	return Matrix.genRandom(rowOrColumn,rowOrColumn,100,0);
+        	
+        }
         
 }
