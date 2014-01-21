@@ -1,3 +1,7 @@
+// The creation of this file was purely meant to be a learning exercise in algorithm design. We are aware that 
+// Libraries exist that can significantly simplify our lives. We might use them later on... Maybe. 
+
+
 package com.sehackers.models;
 
 import java.math.BigDecimal;
