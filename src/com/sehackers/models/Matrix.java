@@ -1,7 +1,15 @@
-// The creation of this file was purely meant to be a learning exercise in algorithm design. We are aware that 
-// Libraries exist that can significantly simplify our lives. That being said, we might use them later on... Maybe. 
-
-
+/*
+    A simple Matrix library for our simple application. :)
+    
+    TODOs: 
+        - implement complex matrices
+        - implement algorithm to find eigenvalues
+        - start throwing exceptions instead of printing errors 
+        - implement world domination
+        - delink the determinant and the RREF functions 
+            -   they require unnecessary backdoor black magic with 
+                each other to function
+ */
 package com.sehackers.models;
 
 import java.math.BigDecimal;
@@ -9,8 +17,8 @@ import java.math.BigDecimal;
 public class Matrix {
 
     private double[][] matrix;
-    private int rows = 0;		// These variables can be replaced with the use of subroutines but it makes the code less readable so screw that
-    private int columns = 0;    // These variables can be replaced with the use of subroutines but it makes the code less readable so screw that
+    private int rows = 0;
+    private int columns = 0;
     private double epsilon = 0.000000000001;
     private double detSign = 1;
     
@@ -209,7 +217,7 @@ public class Matrix {
     	return newMatrix;
     }
     
-    // just a subroutine I copied from stackoverflow that rounds the doubles for me :)
+    // just a subroutine that rounds the doubles :)
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
 
@@ -224,6 +232,7 @@ public class Matrix {
     }
 
     
+    // a less deadly determinant method 
     public double getDeterminant() {
     	
     	if (this.rows != this.columns){
@@ -244,25 +253,6 @@ public class Matrix {
     	
     	return determinant * detSign;
     }
-    
-//	  KILLED BECAUSE INEFFICIENT
-//    public double getDeterminant() {
-//
-//    	if (this.rows != this.columns){
-//    		System.out.println("MATRIX NOT SQUARE! YOU CAN'T CALCULATE DETERMINANT.");
-//    		return (Double) null;
-//    	}
-//    	double determinant = 0;
-//    	
-//    	for (int i = 1; i <= this.columns; i++) {
-//    		if (this.columns != 2)
-//    			determinant += this.matrix[1-1][i-1] * Math.pow((-1),1+i)* this.kill(1, i).getDeterminant(); 
-//    		else
-//    			return this.matrix[0][0]*this.matrix[1][1] - this.matrix[0][1]*this.matrix[1][0];
-//    	}
-//    	
-//    	return determinant;
-//    }
 
     
     // a subroutine used for finding a matrix with the first ith row and the jth column omitted
@@ -334,14 +324,6 @@ public class Matrix {
     		System.out.println("DETERMINANT IS ZERO SO NO INVERSE EXISTS!");
     		return null;
     	}
-    	
-    	
-    	/*System.out.println("this.getCofactorMatrix().print()");
-    	this.getCofactorMatrix().print();
-    	System.out.println("this.getCofactorMatrix().getTranspose().print()");
-    	this.getCofactorMatrix().getTranspose().print();
-    	System.out.println("this.getCofactorMatrix().getTranspose().divide(this.getDeterminant()).print();");
-    	this.getCofactorMatrix().getTranspose().divide(this.getDeterminant()).print();*/
     	
     	return this.getCofactorMatrix().getTranspose().divide(this.getDeterminant());
     	
@@ -466,6 +448,7 @@ public class Matrix {
     	return this.isRowEmpty(row1-1, 0);
     }
     
+    // verifies if a row is empty
     public boolean isRowEmpty(int row1, int index) {
     	if (index == this.columns - 1 && this.matrix[row1][index] == 0)
     		return true;
@@ -478,11 +461,12 @@ public class Matrix {
     	
     }
     
-    // check if col1 is zero (recursive function); not sure if good idea or not to use recursion
+    // check if col1 is zero (recursive function)
     public boolean isColumnEmpty(int col1) {
     	return this.isColumnEmpty(col1-1, 0);
     }
     
+
     public boolean isColumnEmpty(int col1, int index) {
     	if (index == this.rows - 1 && this.matrix[index][col1] == 0)
     		return true;
